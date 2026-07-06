@@ -1,5 +1,4 @@
 "use client";
-import { useState } from "react";
 
 interface Props {
   url: string;
@@ -7,42 +6,38 @@ interface Props {
 }
 
 export default function PdfViewer({ url, title }: Props) {
-  const [loaded, setLoaded] = useState(false);
-
   return (
-    <>
-      <div className="flex gap-3 mb-4">
-        <a href={url} target="_blank" rel="noopener noreferrer"
-          className="bg-amber-500 hover:bg-amber-400 text-black font-bold px-5 py-2 rounded-lg text-sm transition">
+    <div className="space-y-4">
+      <div className="flex flex-wrap gap-3">
+        <a
+          href={url}
+          download
+          rel="noopener noreferrer"
+          className="bg-amber-500 hover:bg-amber-400 text-black font-bold px-6 py-3 rounded-lg text-sm transition"
+        >
           Download PDF ↓
         </a>
-        <a href={url} target="_blank" rel="noopener noreferrer"
-          className="border border-slate-200 text-slate-600 hover:border-slate-400 px-5 py-2 rounded-lg text-sm transition">
-          Open in new tab ↗
+        <a
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="border border-slate-300 text-slate-700 hover:border-amber-400 hover:text-amber-700 font-semibold px-6 py-3 rounded-lg text-sm transition"
+        >
+          Open PDF in browser ↗
         </a>
       </div>
 
-      {!loaded ? (
-        <button
-          onClick={() => setLoaded(true)}
-          className="w-full border-2 border-dashed border-slate-200 rounded-xl flex flex-col items-center justify-center gap-3 text-slate-500 hover:border-amber-400 hover:text-amber-600 transition cursor-pointer bg-slate-50 hover:bg-amber-50"
-          style={{ minHeight: 320 }}
-        >
-          <svg className="w-12 h-12 opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-              d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-          </svg>
-          <span className="font-semibold text-base">Click to view PDF in browser</span>
-          <span className="text-xs text-slate-400">Opens inline via Google Docs Viewer</span>
-        </button>
-      ) : (
-        <iframe
-          src={`https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`}
-          className="w-full border border-slate-200 rounded-xl"
-          style={{ height: "80vh", minHeight: 600 }}
-          title={title}
-        />
-      )}
-    </>
+      <div className="border border-slate-200 rounded-xl bg-slate-50 px-6 py-8 flex flex-col items-center gap-3 text-center">
+        <svg className="w-14 h-14 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.2}
+            d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+        </svg>
+        <p className="font-semibold text-slate-700">{title}</p>
+        <p className="text-sm text-slate-500 max-w-xs">
+          The manufacturer does not allow PDF preview in embedded viewers.
+          Click <strong>Open PDF in browser</strong> above — your browser will display it natively.
+        </p>
+      </div>
+    </div>
   );
 }
