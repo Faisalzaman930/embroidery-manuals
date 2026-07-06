@@ -2,8 +2,16 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { publicClient } from "@/lib/supabase";
 import { CATEGORY_LABELS, MachineCategory } from "@/lib/types";
+import JsonLd from "@/components/JsonLd";
+import { breadcrumbSchema, organizationSchema } from "@/lib/seo";
 
-export const revalidate = 3600;
+export const revalidate = 86400;
+export const dynamicParams = true;
+
+export async function generateStaticParams() {
+  const { data } = await publicClient().from("brands").select("slug");
+  return (data ?? []).map((b) => ({ slug: b.slug }));
+}
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -13,7 +21,12 @@ export async function generateMetadata({ params }: Props) {
   if (!brand) return {};
   return {
     title: `${brand.name} Embroidery Machine Manuals — Free PDF Downloads`,
-    description: `Download free instruction and service manuals for all ${brand.name} commercial embroidery machines.`,
+    description: `Download free instruction and service manuals for all ${brand.name} commercial embroidery machines. Browse every ${brand.name} model with PDF manuals available.`,
+    alternates: { canonical: `/brands/${slug}` },
+    openGraph: {
+      title: `${brand.name} Embroidery Machine Manuals`,
+      description: `Free PDF manuals for all ${brand.name} embroidery machines.`,
+    },
   };
 }
 
@@ -35,15 +48,34 @@ export default async function BrandPage({ params }: Props) {
     return acc;
   }, {});
 
+  const schemas = [
+    breadcrumbSchema([
+      { name: "Home", path: "/" },
+      { name: `${brand.name} Manuals`, path: `/brands/${slug}` },
+    ]),
+    ...(brand.website_url ? [organizationSchema({
+      name: brand.name,
+      url: brand.website_url,
+      description: brand.description ?? `${brand.name} commercial embroidery machine manufacturer.`,
+      country: brand.country ?? "",
+    })] : []),
+  ];
+
   return (
     <main className="min-h-screen bg-white">
+      <JsonLd data={schemas} />
+
       <div className="bg-slate-900 text-white px-4 py-14">
         <div className="max-w-4xl mx-auto">
-          <Link href="/" className="text-slate-400 hover:text-white text-sm mb-4 inline-block">← All Brands</Link>
+          <nav className="text-sm text-slate-400 mb-4">
+            <Link href="/" className="hover:text-white transition">Home</Link>
+            {" / "}
+            <span className="text-slate-300">{brand.name} Manuals</span>
+          </nav>
           <h1 className="text-3xl font-bold">{brand.name} Embroidery Machine Manuals</h1>
           {brand.country && <p className="text-slate-400 mt-1 text-sm">{brand.country}</p>}
-          {brand.description && <p className="text-slate-300 mt-3 max-w-2xl">{brand.description}</p>}
-          <p className="text-amber-400 text-sm mt-4">{(machines ?? []).length} manuals available</p>
+          {brand.description && <p className="text-slate-300 mt-3 max-w-2xl text-sm leading-relaxed">{brand.description}</p>}
+          <p className="text-amber-400 text-sm mt-4">{(machines ?? []).length} manuals available — free PDF download</p>
         </div>
       </div>
 
@@ -51,7 +83,7 @@ export default async function BrandPage({ params }: Props) {
         {Object.entries(byCategory).map(([cat, ms]) => (
           <section key={cat}>
             <h2 className="text-lg font-bold text-slate-700 mb-4 pb-2 border-b border-slate-100">
-              {CATEGORY_LABELS[cat as MachineCategory] ?? cat}
+              {CATEGORY_LABELS[cat as MachineCategory] ?? cat} Machines
             </h2>
             <div className="grid gap-3">
               {(ms ?? []).map((m) => m && (

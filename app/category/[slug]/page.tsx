@@ -2,8 +2,15 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { publicClient } from "@/lib/supabase";
 import { CATEGORY_LABELS, CATEGORY_DESCRIPTIONS, MachineCategory } from "@/lib/types";
+import JsonLd from "@/components/JsonLd";
+import { breadcrumbSchema } from "@/lib/seo";
 
-export const revalidate = 3600;
+export const revalidate = 86400;
+export const dynamicParams = true;
+
+export async function generateStaticParams() {
+  return Object.keys(CATEGORY_LABELS).map((slug) => ({ slug }));
+}
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -13,7 +20,12 @@ export async function generateMetadata({ params }: Props) {
   if (!label) return {};
   return {
     title: `${label} Embroidery Machine Manuals — Free PDF Downloads`,
-    description: CATEGORY_DESCRIPTIONS[slug as MachineCategory],
+    description: `Free instruction manuals for ${label.toLowerCase()} commercial embroidery machines. ${CATEGORY_DESCRIPTIONS[slug as MachineCategory]} Browse and download PDFs for all brands.`,
+    alternates: { canonical: `/category/${slug}` },
+    openGraph: {
+      title: `${label} Embroidery Machine Manuals`,
+      description: CATEGORY_DESCRIPTIONS[slug as MachineCategory],
+    },
   };
 }
 
@@ -28,14 +40,27 @@ export default async function CategoryPage({ params }: Props) {
     .eq("category", slug)
     .order("model_name");
 
+  const schemas = [
+    breadcrumbSchema([
+      { name: "Home", path: "/" },
+      { name: `${label} Manuals`, path: `/category/${slug}` },
+    ]),
+  ];
+
   return (
     <main className="min-h-screen bg-white">
+      <JsonLd data={schemas} />
+
       <div className="bg-slate-900 text-white px-4 py-14">
         <div className="max-w-4xl mx-auto">
-          <Link href="/" className="text-slate-400 hover:text-white text-sm mb-4 inline-block">← All Types</Link>
+          <nav className="text-sm text-slate-400 mb-4">
+            <Link href="/" className="hover:text-white transition">Home</Link>
+            {" / "}
+            <span className="text-slate-300">{label} Manuals</span>
+          </nav>
           <h1 className="text-3xl font-bold">{label} Embroidery Machine Manuals</h1>
-          <p className="text-slate-300 mt-2 max-w-2xl">{CATEGORY_DESCRIPTIONS[slug as MachineCategory]}</p>
-          <p className="text-amber-400 text-sm mt-4">{(machines ?? []).length} manuals</p>
+          <p className="text-slate-300 mt-2 max-w-2xl text-sm leading-relaxed">{CATEGORY_DESCRIPTIONS[slug as MachineCategory]}</p>
+          <p className="text-amber-400 text-sm mt-4">{(machines ?? []).length} manuals — free PDF download</p>
         </div>
       </div>
 

@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { publicClient } from "@/lib/supabase";
 import { CATEGORY_LABELS, CATEGORY_DESCRIPTIONS, MachineCategory } from "@/lib/types";
+import JsonLd from "@/components/JsonLd";
+import { websiteSchema } from "@/lib/seo";
 
 export const revalidate = 3600;
 
@@ -15,6 +17,7 @@ export default async function Home() {
 
   return (
     <main className="min-h-screen bg-white">
+      <JsonLd data={websiteSchema()} />
       <section className="bg-gradient-to-b from-slate-900 to-slate-800 text-white px-4 py-20 text-center">
         <p className="text-amber-400 text-sm font-semibold tracking-widest uppercase mb-3">Free PDF Downloads</p>
         <h1 className="text-4xl md:text-5xl font-bold mb-4">
