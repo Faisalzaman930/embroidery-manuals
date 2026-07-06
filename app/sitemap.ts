@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { publicClient } from "@/lib/supabase";
+import { GUIDES } from "@/lib/troubleshooting-data";
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || "https://embroidery-manuals.vercel.app";
 
@@ -29,7 +30,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const staticPages: MetadataRoute.Sitemap = [
     { url: `${SITE}/`, priority: 1.0, changeFrequency: "weekly", lastModified: new Date() },
+    { url: `${SITE}/troubleshooting`, priority: 0.9, changeFrequency: "monthly", lastModified: new Date() },
+    { url: `${SITE}/about`, priority: 0.5, changeFrequency: "yearly", lastModified: new Date() },
   ];
+
+  const troubleshootingPages: MetadataRoute.Sitemap = GUIDES.map((g) => ({
+    url: `${SITE}/troubleshooting/${g.slug}`,
+    priority: 0.85,
+    changeFrequency: "monthly" as const,
+    lastModified: new Date(),
+  }));
 
   const categoryPages: MetadataRoute.Sitemap = CATEGORIES.map((c) => ({
     url: `${SITE}/category/${c}`,
@@ -52,5 +62,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: m.created_at ? new Date(m.created_at) : new Date(),
   }));
 
-  return [...staticPages, ...categoryPages, ...brandPages, ...machinePages];
+  return [...staticPages, ...troubleshootingPages, ...categoryPages, ...brandPages, ...machinePages];
 }

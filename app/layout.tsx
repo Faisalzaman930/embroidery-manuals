@@ -41,6 +41,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Link href="/brands/happy" className="text-slate-300 hover:text-white transition">Happy</Link>
               <Link href="/category/single-head" className="text-slate-300 hover:text-white transition hidden sm:inline">Single Head</Link>
               <Link href="/category/multi-head" className="text-slate-300 hover:text-white transition hidden sm:inline">Multi Head</Link>
+              <Link href="/troubleshooting" className="text-slate-300 hover:text-white transition">Troubleshooting</Link>
             </nav>
           </div>
         </header>

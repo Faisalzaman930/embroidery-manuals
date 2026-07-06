@@ -5,6 +5,7 @@ import { CATEGORY_LABELS, MachineCategory } from "@/lib/types";
 import JsonLd from "@/components/JsonLd";
 import SpecsTable from "@/components/SpecsTable";
 import { breadcrumbSchema, faqSchema, productSchema } from "@/lib/seo";
+import { getGuidesForCategory } from "@/lib/troubleshooting-data";
 
 export const revalidate = 86400;
 export const dynamicParams = true;
@@ -184,6 +185,35 @@ export default async function MachinePage({ params }: Props) {
             </div>
           </section>
         )}
+
+        {(() => {
+          const guides = getGuidesForCategory(m.category).slice(0, 3);
+          return guides.length > 0 ? (
+            <section className="border border-slate-200 rounded-xl p-6">
+              <h2 className="text-xl font-bold text-slate-800 mb-2">
+                Common {brand?.name} {m.model_name} Problems
+              </h2>
+              <p className="text-slate-500 text-sm mb-4">
+                Most issues on {categoryLabel.toLowerCase()} machines like the {m.model_name} fall into a few categories.
+                See our full step-by-step guides:
+              </p>
+              <ul className="space-y-2">
+                {guides.map((g) => (
+                  <li key={g.slug}>
+                    <Link href={`/troubleshooting/${g.slug}`}
+                      className="flex items-center gap-2 text-sm text-amber-700 hover:text-amber-500 transition group">
+                      <span className="text-amber-400 group-hover:translate-x-0.5 transition-transform">→</span>
+                      <span className="font-medium">{g.title}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+              <Link href="/troubleshooting" className="inline-block mt-4 text-xs text-slate-400 hover:text-amber-600 transition">
+                Browse all troubleshooting guides →
+              </Link>
+            </section>
+          ) : null;
+        })()}
 
         {(related ?? []).length > 0 && (
           <section>
