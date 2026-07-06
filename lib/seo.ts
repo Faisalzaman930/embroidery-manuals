@@ -57,6 +57,25 @@ export function organizationSchema(opts: {
   };
 }
 
+export function howToSchema(opts: {
+  name: string;
+  description: string;
+  steps: { action: string; detail: string }[];
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    name: opts.name,
+    description: opts.description,
+    step: opts.steps.map((s, i) => ({
+      "@type": "HowToStep",
+      position: i + 1,
+      name: s.action,
+      text: s.detail,
+    })),
+  };
+}
+
 export function websiteSchema() {
   return {
     "@context": "https://schema.org",

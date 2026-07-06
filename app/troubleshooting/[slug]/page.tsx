@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { GUIDES, getGuideBySlug } from "@/lib/troubleshooting-data";
 import JsonLd from "@/components/JsonLd";
-import { breadcrumbSchema, faqSchema } from "@/lib/seo";
+import { breadcrumbSchema, faqSchema, howToSchema } from "@/lib/seo";
 
 export const revalidate = false;
 
@@ -51,6 +51,11 @@ export default async function TroubleshootingGuidePage({ params }: Props) {
       { name: "Troubleshooting", path: "/troubleshooting" },
       { name: guide.title, path: `/troubleshooting/${slug}` },
     ]),
+    howToSchema({
+      name: guide.title,
+      description: guide.intro,
+      steps: guide.fixes,
+    }),
     ...(guide.faq.length > 0 ? [faqSchema(guide.faq)] : []),
   ];
 
@@ -138,6 +143,23 @@ export default async function TroubleshootingGuidePage({ params }: Props) {
                     <p className="text-xs text-slate-500 mt-0.5">{r.symptom}</p>
                   </div>
                   <span className="text-amber-500 text-sm shrink-0">Read →</span>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {guide.applies_to.filter((t) => t !== "all").length > 0 && (
+          <section>
+            <h2 className="text-xl font-bold text-slate-800 mb-4">Browse Manuals by Machine Type</h2>
+            <div className="grid gap-2">
+              {guide.applies_to.filter((t) => t !== "all").map((t) => (
+                <Link key={t} href={`/category/${t}`}
+                  className="flex items-center justify-between border border-slate-200 rounded-lg px-4 py-3 hover:border-amber-400 hover:bg-amber-50 transition group">
+                  <span className="font-semibold text-slate-800 group-hover:text-amber-700">
+                    {CATEGORY_LABELS[t] ?? t}
+                  </span>
+                  <span className="text-amber-500 text-sm">Browse manuals →</span>
                 </Link>
               ))}
             </div>

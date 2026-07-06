@@ -42,6 +42,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Link href="/category/single-head" className="text-slate-300 hover:text-white transition hidden sm:inline">Single Head</Link>
               <Link href="/category/multi-head" className="text-slate-300 hover:text-white transition hidden sm:inline">Multi Head</Link>
               <Link href="/troubleshooting" className="text-slate-300 hover:text-white transition">Troubleshooting</Link>
+              <Link href="/compare" className="text-slate-300 hover:text-white transition hidden md:inline">Compare</Link>
             </nav>
           </div>
         </header>
@@ -87,6 +88,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <p className="font-semibold text-white mb-3">About</p>
               <ul className="space-y-1.5 mb-3">
                 <li><Link href="/about" className="hover:text-white transition">About this site</Link></li>
+                <li><Link href="/compare" className="hover:text-white transition">Compare Machines</Link></li>
                 <li><Link href="/sitemap.xml" className="hover:text-white transition">Sitemap</Link></li>
               </ul>
               <p className="text-slate-500 text-xs leading-relaxed">

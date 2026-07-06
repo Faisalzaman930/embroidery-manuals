@@ -62,5 +62,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: m.created_at ? new Date(m.created_at) : new Date(),
   }));
 
-  return [...staticPages, ...troubleshootingPages, ...categoryPages, ...brandPages, ...machinePages];
+  const COMPARE_SLUGS = [
+    "tajima-vs-barudan",
+    "swf-vs-happy",
+    "single-head-vs-multi-head-embroidery-machine",
+  ];
+
+  const comparePages: MetadataRoute.Sitemap = [
+    { url: `${SITE}/compare`, priority: 0.75, changeFrequency: "monthly", lastModified: new Date() },
+    ...COMPARE_SLUGS.map((s) => ({
+      url: `${SITE}/compare/${s}`,
+      priority: 0.8,
+      changeFrequency: "monthly" as const,
+      lastModified: new Date(),
+    })),
+  ];
+
+  return [...staticPages, ...comparePages, ...troubleshootingPages, ...categoryPages, ...brandPages, ...machinePages];
 }

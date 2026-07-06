@@ -4,6 +4,7 @@ import { publicClient } from "@/lib/supabase";
 import { CATEGORY_LABELS, MachineCategory } from "@/lib/types";
 import JsonLd from "@/components/JsonLd";
 import SpecsTable from "@/components/SpecsTable";
+import PdfViewer from "@/components/PdfViewer";
 import { breadcrumbSchema, faqSchema, productSchema } from "@/lib/seo";
 import { getGuidesForCategory } from "@/lib/troubleshooting-data";
 
@@ -38,6 +39,13 @@ export async function generateMetadata({ params }: Props) {
       title: `${brand?.name ?? ""} ${m.model_name} Manual PDF — Free Download`,
       description: m.description ?? `Free PDF manual for the ${brand?.name ?? ""} ${m.model_name}.`,
       type: "article",
+      images: [
+        {
+          url: `/api/og?title=${encodeURIComponent(`${brand?.name ?? ""} ${m.model_name} Manual`)}&subtitle=${encodeURIComponent("Free PDF Download")}`,
+          width: 1200,
+          height: 630,
+        },
+      ],
     },
   };
 }
@@ -134,25 +142,7 @@ export default async function MachinePage({ params }: Props) {
         <section>
           <h2 className="text-xl font-bold text-slate-800 mb-4">{brand?.name} {m.model_name} Instruction Manual (PDF)</h2>
           {m.manual_url ? (
-            <>
-              <div className="flex gap-3 mb-4">
-                <a href={m.manual_url} target="_blank" rel="noopener noreferrer"
-                  className="bg-amber-500 hover:bg-amber-400 text-black font-bold px-5 py-2 rounded-lg text-sm transition">
-                  Download PDF ↓
-                </a>
-                <a href={m.manual_url} target="_blank" rel="noopener noreferrer"
-                  className="border border-slate-200 text-slate-600 hover:border-slate-400 px-5 py-2 rounded-lg text-sm transition">
-                  Open in new tab ↗
-                </a>
-              </div>
-              <iframe
-                src={`https://docs.google.com/viewer?url=${encodeURIComponent(m.manual_url)}&embedded=true`}
-                className="w-full border border-slate-200 rounded-xl"
-                style={{ height: "80vh", minHeight: 600 }}
-                title={`${brand?.name ?? ""} ${m.model_name} Manual`}
-                loading="lazy"
-              />
-            </>
+            <PdfViewer url={m.manual_url} title={`${brand?.name ?? ""} ${m.model_name} Manual`} />
           ) : (
             <div className="rounded-lg border border-slate-200 bg-slate-50 p-6 text-sm text-slate-600">
               Manual PDF not yet available for this model.
