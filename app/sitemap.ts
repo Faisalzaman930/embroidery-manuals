@@ -11,10 +11,21 @@ const CATEGORIES = [
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const db = publicClient();
 
-  const [{ data: brands }, { data: machines }] = await Promise.all([
-    db.from("brands").select("slug, created_at").not("slug", "in", "(juki,consew,brother,singer,chandler,union-special,highlead,yamato,kansai,pegasus)"),
-    db.from("machines").select("slug, created_at, brand_id").not("brand_id", "is", null),
+  const EMBROIDERY_BRANDS = [
+    "tajima","barudan","swf","happy","brother-commercial",
+    "toyota-industrial","melco","zsk","ricoma","pfaff-industrial",
+  ];
+
+  const [{ data: brands }, { data: brandRows }] = await Promise.all([
+    db.from("brands").select("slug, created_at").in("slug", EMBROIDERY_BRANDS),
+    db.from("brands").select("id").in("slug", EMBROIDERY_BRANDS),
   ]);
+
+  const brandIds = (brandRows ?? []).map((b) => b.id);
+  const { data: machines } = await db
+    .from("machines")
+    .select("slug, created_at")
+    .in("brand_id", brandIds);
 
   const staticPages: MetadataRoute.Sitemap = [
     { url: `${SITE}/`, priority: 1.0, changeFrequency: "weekly", lastModified: new Date() },

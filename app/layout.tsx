@@ -84,9 +84,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </div>
             <div>
               <p className="font-semibold text-white mb-3">About</p>
+              <ul className="space-y-1.5 mb-3">
+                <li><Link href="/about" className="hover:text-white transition">About this site</Link></li>
+                <li><Link href="/sitemap.xml" className="hover:text-white transition">Sitemap</Link></li>
+              </ul>
               <p className="text-slate-500 text-xs leading-relaxed">
-                Free instruction and service manuals for commercial embroidery machines.
-                All PDFs are sourced from manufacturers and authorized retailers.
+                Free PDFs sourced from manufacturers and authorized retailers.
                 We do not host copyrighted files.
               </p>
             </div>
