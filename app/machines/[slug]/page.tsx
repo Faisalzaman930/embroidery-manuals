@@ -66,7 +66,7 @@ export default async function MachinePage({ params }: Props) {
               </a>
             </div>
             <iframe
-              src={m.manual_url}
+              src={`https://docs.google.com/viewer?url=${encodeURIComponent(m.manual_url)}&embedded=true`}
               className="w-full border border-slate-200 rounded-xl"
               style={{ height: "80vh", minHeight: 600 }}
               title={`${brand?.name ?? ""} ${m.model_name} Manual`}
